@@ -1,7 +1,11 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2018 Michael Pape
+Copyright for portions of project pepe82sh/conan-arm-none-eabi-gcc-installer
+are held by Konrad Adasiewicz 2018 as part of project
+omicronns/conan-arm-none-eabi-gcc-installer.
+All other copyrights for project pepe82sh/conan-arm-none-eabi-gcc-installer
+are held by Michael Pape 2018.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
