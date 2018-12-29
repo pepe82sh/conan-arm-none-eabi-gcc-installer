@@ -12,7 +12,6 @@ class ConanFileInst(ConanFile):
                 "compiler": {"gcc": {"version": ["5.4", "6.2", "6.3", "7.2", "7.3", "8.2"]}}}
 
     arm_common_path = "https://developer.arm.com/-/media/Files/downloads/gnu-rm"
-    bleeding_edge_common_path = "http://www.freddiechopin.info/phocadownload/bleeding-edge-toolchain"
 
     version_path_filename_map = {
         "8.2": (arm_common_path + "/8-2018q4", "gcc-arm-none-eabi-8-2018-q4-major-"),
@@ -30,7 +29,6 @@ class ConanFileInst(ConanFile):
     }
     build_policy = "missing"
     short_paths = True
-    exports = "7z.exe"
 
     def get_path_filename_ext(self):
         (path, filename) = self.version_path_filename_map[str(self.settings.compiler.version)]
@@ -38,7 +36,8 @@ class ConanFileInst(ConanFile):
         filename += filename_os_part
         return path, filename, ext
 
-    def build(self):
+    def source(self):
+        self.run("git clone https://github.com/vpetrigo/arm-cmake-toolchains.git")
         (path, filename, ext) = self.get_path_filename_ext()
         url = "%s/%s.%s" % (path, filename, ext)
         dest_file = "file.%s" % ext
@@ -53,9 +52,10 @@ class ConanFileInst(ConanFile):
             files_path = os.path.join(filename, extracted_dirs[0])
         else:
             files_path = filename
-        self.copy("*", dst="", src=files_path)
+        self.copy("*", dst="gcc-arm-none-eabi", src=files_path)
+        self.copy("*", dst="arm-cmake-toolchains", src="arm-cmake-toolchains")
 
     def package_info(self):
-        newpath = os.path.join(self.package_folder, "bin")
-        print(newpath)
-        self.env_info.path.append(newpath)
+        self.env_info.path.append(os.path.join(self.package_folder, "gcc-arm-none-eabi", "bin"))
+        self.env_info.CONAN_CMAKE_TOOLCHAIN_FILE = os.path.join(self.package_folder, "arm-cmake-toolchains",
+                                                                "arm-gcc-toolchain.cmake")
