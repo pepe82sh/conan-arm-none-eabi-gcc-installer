@@ -1,67 +1,53 @@
 import os
-import subprocess
-import conans
-import conans.errors as ce
+from conans import ConanFile, tools
 
 
-class ConanFileInst(conans.ConanFile):
+class ConanFileInst(ConanFile):
     name = "arm-none-eabi-gcc_installer"
     description = "creates arm-none-eabi-gcc binaries package"
-    version = "0.3"
+    version = "0.1"
     license = "MIT"
-    url = "https://github.com/omicronns/conan-arm-none-eabi-gcc-installer.git"
-    settings = {"os": ["Windows", "Linux", "Macos"]}
+    url = "https://github.com/pepe82sh/conan-arm-none-eabi-gcc-installer"
+    settings = {"os_build": ["Windows", "Linux", "Macos"],
+                "compiler": {"gcc": {"version": ["5.4", "6.2", "6.3", "7.2", "7.3", "8.2"]}}}
 
     arm_common_path = "https://developer.arm.com/-/media/Files/downloads/gnu-rm"
     bleeding_edge_common_path = "http://www.freddiechopin.info/phocadownload/bleeding-edge-toolchain"
-    
+
     version_path_filename_map = {
-        "bleeding-7.2.0" : (bleeding_edge_common_path, "arm-none-eabi-gcc-7.2.0-170901-win64"),
-        "bleeding-7.1.0" : (bleeding_edge_common_path, "arm-none-eabi-gcc-7.1.0-170503-win64"),
-        "arm-7.2.0": (arm_common_path + "/7-2017q4", "gcc-arm-none-eabi-7-2017-q4-major-%s"),
-        "arm-6.3.1-1": (arm_common_path + "/6-2017q2", "gcc-arm-none-eabi-6-2017-q2-update-%s"),
-        "arm-6.3.1": (arm_common_path + "/6_1-2017q1", "gcc-arm-none-eabi-6-2017-q1-update-%s-zip"),
-        "arm-6.2.1": (arm_common_path + "/6-2016q4", "gcc-arm-none-eabi-6_2-2016q4-20161216-%s-zip"),
-        "arm-5.4.1": (arm_common_path + "/5_4-2016q3", "gcc-arm-none-eabi-5_4-2016q3-20160926-%s-zip"),
+        "8.2": (arm_common_path + "/8-2018q4", "gcc-arm-none-eabi-8-2018-q4-major-"),
+        "7.3": (arm_common_path + "/7-2018q2", "gcc-arm-none-eabi-7-2018-q2-update-"),
+        "7.2": (arm_common_path + "/7-2017q4", "gcc-arm-none-eabi-7-2017-q4-major-"),
+        "6.3": (arm_common_path + "/6_1-2017q2", "gcc-arm-none-eabi-6-2017-q2-update-"),
+        "6.2": (arm_common_path + "/6-2016q4", "gcc-arm-none-eabi-6_2-2016q4-20161216-"),
+        "5.4": (arm_common_path + "/5_4-2016q3", "gcc-arm-none-eabi-5_4-2016q3-20160926-"),
     }
 
-    options = {"version": list(version_path_filename_map.keys())}
-    default_options = "version=arm-7.2.0"
+    filename_os_part_map = {
+        "Windows": ("win32-zip", "zip"),
+        "Linux": ("linux", "tar.bz2"),
+        "Macos": ("mac", "tar.bz2")
+    }
     build_policy = "missing"
     short_paths = True
     exports = "7z.exe"
 
-
-    def configure(self):
-        if "bleeding-edge-toolchain" in str(self.options.version):
-            if str(self.settings.os) in ("Linux", "Macos"):
-                raise ce.ConanException("bleeding-edge-toolchain unavailible for %s" % self.settings.os)
-
-    def get_path_filename(self):
-        (path, filename) = self.version_path_filename_map[str(self.options.version)]
-        if "bleeding-edge-toolchain" not in str(self.options.version):
-            os_id = {"Macos": "mac", "Windows": "win32", "Linux": "linux"}.get(str(self.settings.os))
-            filename = filename % os_id
-        return path, filename
+    def get_path_filename_ext(self):
+        (path, filename) = self.version_path_filename_map[str(self.settings.compiler.version)]
+        (filename_os_part, ext) = self.filename_os_part_map[str(self.settings.os_build)]
+        filename += filename_os_part
+        return path, filename, ext
 
     def build(self):
-        (path, filename) = self.get_path_filename()
-        if "bleeding-edge-toolchain" in str(self.options.version):
-            ext = "7z"
-        else:
-            ext = "tar.bz2" if not self.settings.os == "Windows" else "zip"
+        (path, filename, ext) = self.get_path_filename_ext()
         url = "%s/%s.%s" % (path, filename, ext)
         dest_file = "file.%s" % ext
         self.output.info("Downloading: %s" % url)
-        conans.tools.download(url, dest_file, verify=False)
-        if "bleeding-edge-toolchain" in str(self.options.version):
-            cmd_7z = "7z.exe x file.%s -o%s" % (ext, filename)
-            subprocess.check_call(cmd_7z.split())
-        else:
-            conans.tools.unzip(dest_file, destination=filename)
+        tools.download(url, dest_file)
+        tools.unzip(dest_file, destination=filename)
 
     def package(self):
-        (_, filename) = self.get_path_filename()
+        (_, filename, _) = self.get_path_filename_ext()
         extracted_dirs = os.listdir(filename)
         if len(extracted_dirs) == 1:
             files_path = os.path.join(filename, extracted_dirs[0])
@@ -70,6 +56,6 @@ class ConanFileInst(conans.ConanFile):
         self.copy("*", dst="", src=files_path)
 
     def package_info(self):
-        if not self.package_folder is None:
-            self.env_info.path.append(os.path.join(self.package_folder, "bin"))
-
+        newpath = os.path.join(self.package_folder, "bin")
+        print(newpath)
+        self.env_info.path.append(newpath)
