@@ -4,8 +4,15 @@ import conans
 
 class ConanFileInst(conans.ConanFile):
 
+    settings = "os", "compiler"
+    generators = "cmake"
+
     def build(self):
-        pass
+        cmake = conans.CMake(self)
+        # Current dir is "test_package/build/<build_id>" and CMakeLists.txt is
+        # in "test_package"
+        cmake.configure()
+        cmake.build()
 
     def test(self):
         try:
