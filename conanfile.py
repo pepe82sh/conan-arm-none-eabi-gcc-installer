@@ -37,13 +37,18 @@ class ConanFileInst(ConanFile):
         return path, filename, ext
 
     def source(self):
+        # toolchain
         self.run("git clone https://github.com/vpetrigo/arm-cmake-toolchains.git")
+        # compiler
         (path, filename, ext) = self.get_path_filename_ext()
         url = "%s/%s.%s" % (path, filename, ext)
         dest_file = "file.%s" % ext
         self.output.info("Downloading: %s" % url)
         tools.download(url, dest_file)
         tools.unzip(dest_file, destination=filename)
+        # utils helper
+        with open("arm-none-eabi-utils.cmake", "w+") as file:
+            file.write("include(${CMAKE_CURRENT_LIST_DIR}/arm-cmake-toolchains/utils.cmake)")
 
     def package(self):
         (_, filename, _) = self.get_path_filename_ext()
@@ -54,6 +59,7 @@ class ConanFileInst(ConanFile):
             files_path = filename
         self.copy("*", dst="gcc-arm-none-eabi", src=files_path)
         self.copy("*", dst="arm-cmake-toolchains", src="arm-cmake-toolchains")
+        self.copy("arm-none-eabi-utils.cmake")
 
     def package_info(self):
         self.env_info.path.append(os.path.join(self.package_folder, "gcc-arm-none-eabi", "bin"))
