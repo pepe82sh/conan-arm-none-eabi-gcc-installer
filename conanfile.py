@@ -1,5 +1,6 @@
 import os
 from conans import ConanFile, tools
+from packaging import version
 
 
 class ConanFileInst(ConanFile):
@@ -23,6 +24,12 @@ class ConanFileInst(ConanFile):
     }
 
     filename_os_part_map = {
+        "Windows": ("win32", "zip"),
+        "Linux": ("linux", "tar.bz2"),
+        "Macos": ("mac", "tar.bz2")
+    }
+
+    filename_os_part_map_pre_6_3 = {
         "Windows": ("win32-zip", "zip"),
         "Linux": ("linux", "tar.bz2"),
         "Macos": ("mac", "tar.bz2")
@@ -33,6 +40,8 @@ class ConanFileInst(ConanFile):
     def get_path_filename_ext(self):
         (path, filename) = self.version_path_filename_map[str(self.settings.compiler.version)]
         (filename_os_part, ext) = self.filename_os_part_map[str(self.settings.os_build)]
+        if version.parse(self.settings.compiler.version) < version.parse("6.3"):
+            (filename_os_part, ext) = self.filename_os_part_map_pre_6_3[str(self.settings.os_build)]
         filename += filename_os_part
         return path, filename, ext
 
