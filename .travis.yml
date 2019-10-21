@@ -27,7 +27,12 @@ install:
   - conan user
 script:
 # Create the package
+  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=5.4 -s compiler.libcxx=libstdc++11 . test/testing
+  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=6.2 -s compiler.libcxx=libstdc++11 . test/testing
+  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=6.3 -s compiler.libcxx=libstdc++11 . test/testing
+  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=7.2 -s compiler.libcxx=libstdc++11 . test/testing
   - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=7.3 -s compiler.libcxx=libstdc++11 . test/testing
+  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=8.2 -s compiler.libcxx=libstdc++11 . test/testing
 # Call your build system
 #  - cmake . -G "Unix Makefiles"
 #  - cmake --build .
