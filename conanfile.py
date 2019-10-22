@@ -6,7 +6,7 @@ from packaging import version
 class ConanFileInst(ConanFile):
     name = "arm-none-eabi-gcc_installer"
     description = "creates arm-none-eabi-gcc binaries package"
-    version = "0.1"
+    version = "0.2"
     license = "MIT"
     url = "https://github.com/pepe82sh/conan-arm-none-eabi-gcc-installer"
     settings = {"os_build": ["Windows", "Linux", "Macos"],
