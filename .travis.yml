@@ -2,8 +2,8 @@
 language: python            # this works for Linux but is an error on macOS or Windows
 matrix:
   include:
-#    - name: "Python 3.7.1 on Xenial Linux"
-#      python: 3.7           # this works for Linux but is ignored on macOS or Windows
+    - name: "Python 3.7.1 on Xenial Linux"
+      python: 3.7           # this works for Linux but is ignored on macOS or Windows
     - name: "Python 3.7.2 on macOS"
       os: osx
       osx_image: xcode11  # Python 3.7.2 running on macOS 10.14.3
@@ -22,12 +22,12 @@ matrix:
 
 install:
 # Install conan
-  - pip install conan
+  - pip3 install conan
 # Automatic detection of your arch, compiler, etc.
   - conan user
 script:
 # Create the package
-  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=6.2 -s compiler.libcxx=libstdc++11 . test/testing
+#  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=6.2 -s compiler.libcxx=libstdc++11 . test/testing
 #  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=6.3 -s compiler.libcxx=libstdc++11 . test/testing
 #  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=7.2 -s compiler.libcxx=libstdc++11 . test/testing
 #  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=7.3 -s compiler.libcxx=libstdc++11 . test/testing
