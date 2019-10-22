@@ -10,17 +10,17 @@ class ConanFileInst(ConanFile):
     license = "MIT"
     url = "https://github.com/pepe82sh/conan-arm-none-eabi-gcc-installer"
     settings = {"os_build": ["Windows", "Linux", "Macos"],
-                "compiler": {"gcc": {"version": ["5.4", "6.2", "6.3", "7.2", "7.3", "8.2"]}}}
+                "compiler": {"gcc": {"version": ["6.2", "6.3", "7.2", "7.3", "8.2", "8.3"]}}}
 
     arm_common_path = "https://developer.arm.com/-/media/Files/downloads/gnu-rm"
 
     version_path_filename_map = {
+        "8.3": (arm_common_path + "/8-2019q3/RC1.1", "gcc-arm-none-eabi-8-2019-q3-update-"),
         "8.2": (arm_common_path + "/8-2018q4", "gcc-arm-none-eabi-8-2018-q4-major-"),
         "7.3": (arm_common_path + "/7-2018q2", "gcc-arm-none-eabi-7-2018-q2-update-"),
         "7.2": (arm_common_path + "/7-2017q4", "gcc-arm-none-eabi-7-2017-q4-major-"),
         "6.3": (arm_common_path + "/6-2017q2", "gcc-arm-none-eabi-6-2017-q2-update-"),
         "6.2": (arm_common_path + "/6-2016q4", "gcc-arm-none-eabi-6_2-2016q4-20161216-"),
-        "5.4": (arm_common_path + "/5_4-2016q3", "gcc-arm-none-eabi-5_4-2016q3-20160926-"),
     }
 
     filename_os_part_map = {
