@@ -2,23 +2,23 @@
 language: python            # this works for Linux but is an error on macOS or Windows
 matrix:
   include:
-    - name: "Python 3.7.1 on Xenial Linux"
-      python: 3.7           # this works for Linux but is ignored on macOS or Windows
-    - name: "Python 3.7.2 on macOS"
-      os: osx
-      osx_image: xcode11  # Python 3.7.2 running on macOS 10.14.3
-      language: shell       # 'language: python' is an error on Travis CI macOS
-      # python: 3.7         # 'python:' is ignored on Travis CI macOS
-      before_install: python3 --version ; pip3 --version ; sw_vers
-#    - name: "Python 3.7.4 on Windows"
-#      os: windows           # Windows 10.0.17134 N/A Build 17134
-#      language: shell       # 'language: python' is an error on Travis CI Windows
-#      # python: 3.7         # 'python:' is ignored on Travis CI Windows
-#      before_install:
-#        - choco install python3 --version=3.7.4
-#        - python --version
-#        - python -m pip install --upgrade pip
-#      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+#    - name: "Python 3.7.1 on Xenial Linux"
+#      python: 3.7           # this works for Linux but is ignored on macOS or Windows
+#    - name: "Python 3.7.2 on macOS"
+#      os: osx
+#      osx_image: xcode11  # Python 3.7.2 running on macOS 10.14.3
+#      language: shell       # 'language: python' is an error on Travis CI macOS
+#      # python: 3.7         # 'python:' is ignored on Travis CI macOS
+#      before_install: python3 --version ; pip3 --version ; sw_vers
+    - name: "Python 3.7.4 on Windows"
+      os: windows           # Windows 10.0.17134 N/A Build 17134
+      language: shell       # 'language: python' is an error on Travis CI Windows
+      # python: 3.7         # 'python:' is ignored on Travis CI Windows
+      before_install:
+        - choco install python3 --version=3.7.4
+        - python --version
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
 
 install:
 # Install conan
@@ -27,7 +27,7 @@ install:
   - conan user
 script:
 # Create the package
-#  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=6.2 -s compiler.libcxx=libstdc++11 . test/testing
+  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=6.2 -s compiler.libcxx=libstdc++11 . test/testing
 #  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=6.3 -s compiler.libcxx=libstdc++11 . test/testing
 #  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=7.2 -s compiler.libcxx=libstdc++11 . test/testing
 #  - conan create -s arch=armv7 -s compiler=gcc -s compiler.version=7.3 -s compiler.libcxx=libstdc++11 . test/testing
