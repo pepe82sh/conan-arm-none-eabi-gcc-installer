@@ -1,3 +1,5 @@
 
 \.idea/
 \test_package/build
+
+.DS_Store
